@@ -235,7 +235,7 @@ class PostHandlerTest extends BaseTestHandler {
         });
 
         final PostHandler handler = new PostHandler(mockTrellisRequest, root, "bad-resource", mockInputStream,
-                mockBundler, null);
+                mockBundler, extensions, null);
         final Response res = assertThrows(WebApplicationException.class, () ->
                 handler.createResource(handler.initialize(mockParent, MISSING_RESOURCE)).toCompletableFuture().join())
             .getResponse();
@@ -246,7 +246,7 @@ class PostHandlerTest extends BaseTestHandler {
     private PostHandler buildPostHandler(final String resourceName, final String id, final String baseUrl)
                     throws IOException {
         final InputStream entity = getClass().getResource(resourceName).openStream();
-        return new PostHandler(mockTrellisRequest, root, id, entity, mockBundler, baseUrl);
+        return new PostHandler(mockTrellisRequest, root, id, entity, mockBundler, extensions, baseUrl);
     }
 
     private Stream<Executable> checkBinaryEntityResponse(final String contentType) {

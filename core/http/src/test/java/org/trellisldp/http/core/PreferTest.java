@@ -143,6 +143,42 @@ class PreferTest {
     }
 
     @Test
+    void testRoundTrip1() {
+        final Prefer prefer = Prefer.valueOf("return=minimal; handling=lenient; respond-async");
+        final String prefString = prefer.toString();
+        final Prefer prefer2 = Prefer.valueOf(prefString);
+        assertEquals(prefer.getInclude(), prefer2.getInclude());
+        assertEquals(prefer.getOmit(), prefer2.getOmit());
+        assertEquals(prefer.getPreference(), prefer2.getPreference());
+        assertEquals(prefer.getHandling(), prefer2.getHandling());
+        assertEquals(prefer.getRespondAsync(), prefer2.getRespondAsync());
+    }
+
+    @Test
+    void testRoundTrip2() {
+        final Prefer prefer = Prefer.valueOf("return=representation; include=\"https://example.com/Prefer\"");
+        final String prefString = prefer.toString();
+        final Prefer prefer2 = Prefer.valueOf(prefString);
+        assertEquals(prefer.getInclude(), prefer2.getInclude());
+        assertEquals(prefer.getOmit(), prefer2.getOmit());
+        assertEquals(prefer.getPreference(), prefer2.getPreference());
+        assertEquals(prefer.getHandling(), prefer2.getHandling());
+        assertEquals(prefer.getRespondAsync(), prefer2.getRespondAsync());
+    }
+
+    @Test
+    void testRoundTrip3() {
+        final Prefer prefer = Prefer.valueOf("return=representation; omit=\"https://example.com/Prefer\"");
+        final String prefString = prefer.toString();
+        final Prefer prefer2 = Prefer.valueOf(prefString);
+        assertEquals(prefer.getInclude(), prefer2.getInclude());
+        assertEquals(prefer.getOmit(), prefer2.getOmit());
+        assertEquals(prefer.getPreference(), prefer2.getPreference());
+        assertEquals(prefer.getHandling(), prefer2.getHandling());
+        assertEquals(prefer.getRespondAsync(), prefer2.getRespondAsync());
+    }
+
+    @Test
     void testStaticInclude() {
         final Prefer prefer = Prefer.ofInclude();
         assertEquals(of("representation"), prefer.getPreference(), "Check preference type");

@@ -15,7 +15,10 @@ package org.trellisldp.http;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.trellisldp.http.core.HttpConstants.ACL;
+import static org.trellisldp.vocabulary.Trellis.PreferAccessControl;
 
 import javax.ws.rs.core.Application;
 
@@ -45,7 +48,7 @@ class TrellisHttpResourceBaseUrlTest extends AbstractTrellisHttpResourceTest {
         final String origin = baseUri.substring(0, baseUri.length() - 1);
 
         final ResourceConfig config = new ResourceConfig();
-        config.register(new TrellisHttpResource(mockBundler, URL));
+        config.register(new TrellisHttpResource(mockBundler, singletonMap(ACL, PreferAccessControl), URL));
         config.register(new TestAuthenticationFilter("testUser", "group"));
         config.register(new CacheControlFilter());
         config.register(new WebSubHeaderFilter(HUB));
