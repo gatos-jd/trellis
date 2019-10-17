@@ -25,6 +25,12 @@ import org.apache.commons.rdf.api.Dataset;
 import org.apache.commons.rdf.api.IRI;
 import org.apache.commons.rdf.api.RDFTerm;
 
+import co.elastic.apm.api.ElasticApm;
+import co.elastic.apm.api.Transaction;
+import co.elastic.apm.api.CaptureTransaction;
+import co.elastic.apm.api.CaptureSpan;
+
+
 /**
  * The ResourceService provides methods for creating, retrieving and manipulating Trellis resources.
  *
@@ -45,6 +51,7 @@ public interface ResourceService extends RetrievalService<Resource> {
      * the {@link CompletionStage} will complete exceptionally and can be handled with
      * {@link CompletionStage#handle}, {@link CompletionStage#exceptionally} or similar methods.
      */
+    @CaptureSpan
     default CompletionStage<Void> create(Metadata metadata, Dataset dataset) {
         return replace(metadata, dataset);
     }
@@ -59,6 +66,7 @@ public interface ResourceService extends RetrievalService<Resource> {
      * the {@link CompletionStage} will complete exceptionally and can be handled with
      * {@link CompletionStage#handle}, {@link CompletionStage#exceptionally} or similar methods.
      */
+    @CaptureSpan
     CompletionStage<Void> replace(Metadata metadata, Dataset dataset);
 
     /**
@@ -70,6 +78,7 @@ public interface ResourceService extends RetrievalService<Resource> {
      * operation, the {@link CompletionStage} will complete exceptionally and can be handled with
      * {@link CompletionStage#handle}, {@link CompletionStage#exceptionally} or similar methods.
      */
+    @CaptureSpan
     CompletionStage<Void> delete(Metadata metadata);
 
     /**
@@ -80,6 +89,7 @@ public interface ResourceService extends RetrievalService<Resource> {
      * the {@link CompletionStage} will complete exceptionally and can be handled with
      * {@link CompletionStage#handle}, {@link CompletionStage#exceptionally} or similar methods.
      */
+    @CaptureSpan
     CompletionStage<Void> add(IRI identifier, Dataset dataset);
 
     /**
@@ -88,6 +98,7 @@ public interface ResourceService extends RetrievalService<Resource> {
      * @param term the RDF term
      * @return a skolemized node, if a blank node; otherwise the original term
      */
+    @CaptureSpan
     default RDFTerm skolemize(final RDFTerm term) {
         if (term instanceof BlankNode) {
             return getInstance().createIRI(TRELLIS_BNODE_PREFIX + ((BlankNode) term).uniqueReference());
@@ -101,6 +112,7 @@ public interface ResourceService extends RetrievalService<Resource> {
      * @param term the RDF term
      * @return a blank node, if a previously-skolemized node; otherwise the original term
      */
+    @CaptureSpan
     default RDFTerm unskolemize(final RDFTerm term) {
         if (term instanceof IRI) {
             final String iri = ((IRI) term).getIRIString();
@@ -161,6 +173,7 @@ public interface ResourceService extends RetrievalService<Resource> {
      * @return a new completion stage that, when the stage completes normally, indicates that the
      *         identified resource has been updated with a new modification date.
      */
+    @CaptureSpan
     CompletionStage<Void> touch(IRI identifier);
 
     /**
@@ -168,6 +181,7 @@ public interface ResourceService extends RetrievalService<Resource> {
      *
      * @return a set of supported interaction models
      */
+    @CaptureSpan
     Set<IRI> supportedInteractionModels();
 
     /**
@@ -175,5 +189,6 @@ public interface ResourceService extends RetrievalService<Resource> {
      *
      * @return a new identifier
      */
+    @CaptureSpan
     String generateIdentifier();
 }

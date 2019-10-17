@@ -19,6 +19,12 @@ import java.util.concurrent.CompletionStage;
 
 import org.apache.commons.rdf.api.IRI;
 
+import co.elastic.apm.api.ElasticApm;
+import co.elastic.apm.api.Transaction;
+import co.elastic.apm.api.CaptureTransaction;
+import co.elastic.apm.api.CaptureSpan;
+
+
 /**
  * An interface for a Memento subsystem. Mementos of {@link Resource}s may be made and retrieved using this service.
  * Mementos may also be recorded by other means, including by the persistence layer independently of Trellis, but unless
@@ -54,6 +60,7 @@ public interface MementoService {
      * the {@link CompletionStage} will complete exceptionally and can be handled with
      * {@link CompletionStage#handle}, {@link CompletionStage#exceptionally} or similar methods.
      */
+    @CaptureSpan
     CompletionStage<Void> put(Resource resource);
 
     /**
@@ -62,6 +69,7 @@ public interface MementoService {
      * @param time the requested time
      * @return the new completion stage, containing the fetched resource
      */
+    @CaptureSpan
     CompletionStage<Resource> get(IRI identifier, Instant time);
 
     /**
@@ -69,5 +77,6 @@ public interface MementoService {
      * @param identifier the resource identifier
      * @return the new completion stage containing a collection of Memento dateTimes
      */
+    @CaptureSpan
     CompletionStage<SortedSet<Instant>> mementos(IRI identifier);
 }

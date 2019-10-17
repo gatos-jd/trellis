@@ -84,6 +84,12 @@ import org.trellisldp.http.impl.PostHandler;
 import org.trellisldp.http.impl.PutHandler;
 import org.trellisldp.vocabulary.LDP;
 
+import co.elastic.apm.api.ElasticApm;
+import co.elastic.apm.api.Transaction;
+import co.elastic.apm.api.CaptureTransaction;
+import co.elastic.apm.api.CaptureSpan;
+
+
 /**
  * An HTTP request matcher for path-based HTTP resource operations.
  *
@@ -212,6 +218,8 @@ public class TrellisHttpResource {
                 responseCode = "200",
                 description = "The linked data resource, serialized as JSON-LD",
                 content = @Content(mediaType = "application/ld+json"))})
+    @CaptureTransaction
+    @CaptureSpan
     public void getResource(@Suspended final AsyncResponse response, @Context final Request request,
             @Context final UriInfo uriInfo, @Context final HttpHeaders headers) {
         fetchResource(new TrellisRequest(request, uriInfo, headers))
@@ -232,6 +240,8 @@ public class TrellisHttpResource {
     @Timed
     @Operation(summary = "Get the headers for a linked data resource")
     @APIResponse(description = "The headers for a linked data resource")
+    @CaptureTransaction
+    @CaptureSpan
     public void getResourceHeaders(@Suspended final AsyncResponse response, @Context final Request request,
             @Context final UriInfo uriInfo, @Context final HttpHeaders headers) {
         fetchResource(new TrellisRequest(request, uriInfo, headers))
@@ -250,6 +260,8 @@ public class TrellisHttpResource {
     @Timed
     @Operation(summary = "Get the interaction options for a linked data resource")
     @APIResponse(description = "The interaction options for a linked data resource")
+    @CaptureTransaction
+    @CaptureSpan
     public void options(@Suspended final AsyncResponse response, @Context final Request request,
             @Context final UriInfo uriInfo, @Context final HttpHeaders headers) {
         final TrellisRequest req = new TrellisRequest(request, uriInfo, headers);
@@ -275,6 +287,8 @@ public class TrellisHttpResource {
     @PATCH
     @Timed
     @Operation(summary = "Update a linked data resource")
+    @CaptureTransaction
+    @CaptureSpan
     public void updateResource(@Suspended final AsyncResponse response, @Context final Request request,
             @Context final UriInfo uriInfo, @Context final HttpHeaders headers,
             @Context final SecurityContext secContext,
@@ -303,6 +317,8 @@ public class TrellisHttpResource {
     @DELETE
     @Timed
     @Operation(summary = "Delete a linked data resource")
+    @CaptureTransaction
+    @CaptureSpan
     public void deleteResource(@Suspended final AsyncResponse response, @Context final Request request,
             @Context final UriInfo uriInfo, @Context final HttpHeaders headers,
             @Context final SecurityContext secContext) {
@@ -329,6 +345,8 @@ public class TrellisHttpResource {
     @POST
     @Timed
     @Operation(summary = "Create a linked data resource")
+    @CaptureTransaction
+    @CaptureSpan
     public void createResource(@Suspended final AsyncResponse response, @Context final Request request,
             @Context final UriInfo uriInfo, @Context final HttpHeaders headers,
             @Context final SecurityContext secContext,
@@ -362,6 +380,8 @@ public class TrellisHttpResource {
     @PUT
     @Timed
     @Operation(summary = "Create or update a linked data resource")
+    @CaptureTransaction
+    @CaptureSpan
     public void setResource(@Suspended final AsyncResponse response, @Context final Request request,
             @Context final UriInfo uriInfo, @Context final HttpHeaders headers,
             @Context final SecurityContext secContext,
@@ -377,6 +397,7 @@ public class TrellisHttpResource {
             .thenApply(ResponseBuilder::build).exceptionally(this::handleException).thenApply(response::resume);
     }
 
+    @CaptureSpan
     private CompletionStage<? extends Resource> getParent(final IRI identifier) {
         final Optional<IRI> parent = getContainer(identifier);
         if (parent.isPresent()) {
@@ -385,10 +406,13 @@ public class TrellisHttpResource {
         return completedFuture(MISSING_RESOURCE);
     }
 
+    @CaptureSpan
     private String getBaseUrl(final TrellisRequest req) {
         return baseUrl != null ? baseUrl : req.getBaseUrl();
     }
 
+
+    @CaptureSpan
     private CompletionStage<ResponseBuilder> fetchResource(final TrellisRequest req) {
         final String urlBase = getBaseUrl(req);
         final IRI identifier = rdf.createIRI(TRELLIS_DATA_PREFIX + req.getPath());

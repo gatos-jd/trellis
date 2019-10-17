@@ -10,6 +10,8 @@ ext {
 }
 
 dependencies {
+    compile 'co.elastic.apm:apm-agent-api:1.10.0'
+
     api("javax.annotation:javax.annotation-api:$javaxAnnotationsVersion")
     api("javax.enterprise:cdi-api:${cdiApiVersion}")
     api("javax.inject:javax.inject:$javaxInjectVersion")
