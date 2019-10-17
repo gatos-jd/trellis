@@ -222,6 +222,12 @@ public class TrellisHttpResource {
     @CaptureSpan
     public void getResource(@Suspended final AsyncResponse response, @Context final Request request,
             @Context final UriInfo uriInfo, @Context final HttpHeaders headers) {
+
+        // Spurious, nonsensical print statement, just to make sure we're
+        // using the right packages from downstream services.
+        // Fix this.  Obviously.
+        LOGGER.info("-------------------- GET RESOURCE - {}", request);
+
         fetchResource(new TrellisRequest(request, uriInfo, headers))
             .thenApply(ResponseBuilder::build).exceptionally(this::handleException).thenApply(response::resume);
     }

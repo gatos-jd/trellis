@@ -10,7 +10,7 @@ ext {
 
 dependencies {
     compile 'co.elastic.apm:apm-agent-api:1.10.0'
-    
+
     api("org.apache.commons:commons-rdf-api:$commonsRdfVersion")
     api("javax.enterprise:cdi-api:${cdiApiVersion}")
 
